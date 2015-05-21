@@ -1,5 +1,5 @@
-let g:ctrlp_map = '<c-p>'
-unmap <c-b>
+" let g:ctrlp_map = '<c-p>'
+" unmap <c-b>
 
 set relativenumber
 set number
