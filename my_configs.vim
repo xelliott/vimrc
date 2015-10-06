@@ -4,7 +4,8 @@
 set relativenumber
 set number
 
-set background=dark
+set background=background
+set t_Co=16
 colorscheme solarized
 
 set ts=3 sw=3 et
