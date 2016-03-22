@@ -104,6 +104,7 @@ let g:multi_cursor_next_key="\<C-s>"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " let g:airline_theme="luna"
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vimroom
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -114,15 +115,28 @@ let g:multi_cursor_next_key="\<C-s>"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim-go
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:go_fmt_command = "goimports"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Syntastic (syntax checker)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Python
 " let g:syntastic_python_checkers=['pyflakes']
+
+" Javascript
 " let g:syntastic_javascript_checkers = ['jshint']
+
+" Go
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 
 " Custom CoffeeScript SyntasticCheck
 " func! SyntasticCheckCoffeescript()
 "     let l:filename = substitute(expand("%:p"), '\(\w\+\)\.coffee', '.coffee.\1.js', '')
-"     execute "e " . l:filename
+"     execute "tabedit " . l:filename
 "     execute "SyntasticCheck"
 "     execute "Errors"
 " endfunc
