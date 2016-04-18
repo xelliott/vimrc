@@ -1,12 +1,11 @@
-set t_Co=16
-
 " let g:ctrlp_map = '<c-p>'
 " unmap <c-b>
 
 set relativenumber
 set number
 
-set background=light
+set background=dark
+set t_Co=16
 colorscheme solarized
 
 set ts=3 sw=3 et

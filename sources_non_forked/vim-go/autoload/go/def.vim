@@ -2,62 +2,68 @@ if !exists("g:go_godef_bin")
 	let g:go_godef_bin = "godef"
 endif
 
+if go#vimproc#has_vimproc()
+	let s:vim_system = get(g:, 'gocomplete#system_function', 'vimproc#system2')
+else
+	let s:vim_system = get(g:, 'gocomplete#system_function', 'system')
+endif
+
+fu! s:system(str, ...)
+	return call(s:vim_system, [a:str] + a:000)
+endf
 
 " modified and improved version of vim-godef
 function! go#def#Jump(...)
 	if !len(a:000)
-		" gives us the offset of the word, basicall the position of the word under
-		" he cursor
-		let arg = s:getOffset()
+		let arg = "-o=" . go#util#OffsetCursor()
 	else
 		let arg = a:1
 	endif
 
-	let bin_path = go#tool#BinPath(g:go_godef_bin)
+	let bin_path = go#path#CheckBinPath(g:go_godef_bin)
 	if empty(bin_path)
 		return
 	endif
 
-	let command = bin_path . " -f=" . expand("%:p") . " -i " . shellescape(arg)
+	let old_gopath = $GOPATH
+	let $GOPATH = go#path#Detect()
+
+	let fname = fnamemodify(expand("%"), ':p:gs?\\?/?')
+	let command = bin_path . " -f=" . shellescape(fname) . " -i " . shellescape(arg)
 
 	" get output of godef
-	let out=system(command, join(getbufline(bufnr('%'), 1, '$'), LineEnding()))
+	let out = s:system(command, join(getbufline(bufnr('%'), 1, '$'), go#util#LineEnding()))
 
 	" jump to it
 	call s:godefJump(out, "")
+	let $GOPATH = old_gopath
 endfunction
 
 
 function! go#def#JumpMode(mode)
-	let arg = s:getOffset()
+	let arg = "-o=" . go#util#OffsetCursor()
 
-	let bin_path = go#tool#BinPath(g:go_godef_bin)
+	let bin_path = go#path#CheckBinPath(g:go_godef_bin)
 	if empty(bin_path)
 		return
 	endif
 
-	let command = bin_path . " -f=" . expand("%:p") . " -i " . shellescape(arg)
+	let old_gopath = $GOPATH
+	let $GOPATH = go#path#Detect()
+
+	let fname = fnamemodify(expand("%"), ':p:gs?\\?/?')
+	let command = bin_path . " -f=" . shellescape(fname) . " -i " . shellescape(arg)
 
 	" get output of godef
-	let out=system(command, join(getbufline(bufnr('%'), 1, '$'), LineEnding()))
+	let out = s:system(command, join(getbufline(bufnr('%'), 1, '$'), go#util#LineEnding()))
 
 	call s:godefJump(out, a:mode)
+	let $GOPATH = old_gopath
 endfunction
 
 
 function! s:getOffset()
-	let pos = getpos(".")[1:2]
-	if &encoding == 'utf-8'
-		let offs = line2byte(pos[0]) + pos[1] - 2
-	else
-		let c = pos[1]
-		let buf = line('.') == 1 ? "" : (join(getline(1, pos[0] - 1), LineEnding()) . LineEnding())
-		let buf .= c == 1 ? "" : getline(pos[0])[:c-2]
-		let offs = len(iconv(buf, &encoding, "utf-8"))
-	endif
-
-	let argOff = "-o=" . offs
-	return argOff
+	return "-o=" . go#util#OffsetCursor()
 endfunction
 
 
@@ -66,7 +72,7 @@ function! s:godefJump(out, mode)
 	let &errorformat = "%f:%l:%c"
 
 	if a:out =~ 'godef: '
-		let out=substitute(a:out, LineEnding() . '$', '', '')
+		let out = substitute(a:out, go#util#LineEnding() . '$', '', '')
 		echom out
 	else
 		let parts = split(a:out, ':')
@@ -97,7 +103,7 @@ function! s:godefJump(out, mode)
 
 		" jump to file now
 		sil ll 1
-		normal zz
+		normal! zz
 
 		let &switchbuf = old_switchbuf
 	end

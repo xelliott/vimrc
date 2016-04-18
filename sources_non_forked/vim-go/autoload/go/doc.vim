@@ -71,6 +71,14 @@ function! s:godocWord(args)
     return [pkg, exported_name]
 endfunction
 
+function! s:godocNotFound(content)
+    if len(a:content) == 0
+        return 1
+    endif
+
+    return a:content =~# '^.*: no such file or directory\n$'
+endfunction
+
 function! go#doc#OpenBrowser(...)
     let pkgs = s:godocWord(a:000)
     if empty(pkgs)
@@ -97,7 +105,7 @@ function! go#doc#Open(newmode, mode, ...)
     let command = g:go_doc_command . ' ' . g:go_doc_options . ' ' . pkg
 
     silent! let content = system(command)
-    if v:shell_error || !len(content)
+    if v:shell_error || s:godocNotFound(content)
         echo 'No documentation found for "' . pkg . '".'
         return -1
     endif
@@ -105,28 +113,28 @@ function! go#doc#Open(newmode, mode, ...)
     call s:GodocView(a:newmode, a:mode, content)
 
     if exported_name == ''
-        silent! normal gg
+        silent! normal! gg
         return -1
     endif
 
     " jump to the specified name
     if search('^func ' . exported_name . '(')
-        silent! normal zt
+        silent! normal! zt
         return -1
     endif
 
     if search('^type ' . exported_name)
-        silent! normal zt
+        silent! normal! zt
         return -1
     endif
 
     if search('^\%(const\|var\|type\|\s\+\) ' . pkg . '\s\+=\s')
-        silent! normal zt
+        silent! normal! zt
         return -1
     endif
 
     " nothing found, jump to top
-    silent! normal gg
+    silent! normal! gg
 endfunction
 
 function! s:GodocView(newposition, position, content)
