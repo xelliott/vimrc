@@ -12,6 +12,7 @@ let s:_DEFAULT_CHECKERS = {
         \ 'apiblueprint':  ['drafter'],
         \ 'applescript':   ['osacompile'],
         \ 'asciidoc':      ['asciidoc'],
+        \ 'asl':           ['iasl'],
         \ 'asm':           ['gcc'],
         \ 'bro':           ['bro'],
         \ 'bemhtml':       ['bemhtmllint'],
@@ -37,7 +38,7 @@ let s:_DEFAULT_CHECKERS = {
         \ 'eruby':         ['ruby'],
         \ 'fortran':       ['gfortran'],
         \ 'glsl':          ['cgc'],
-        \ 'go':            ['go'],
+        \ 'go':            [],
         \ 'haml':          ['haml'],
         \ 'handlebars':    ['handlebars'],
         \ 'haskell':       ['hdevtools', 'hlint'],
@@ -84,14 +85,17 @@ let s:_DEFAULT_CHECKERS = {
         \ 'slim':          ['slimrb'],
         \ 'sml':           ['smlnj'],
         \ 'spec':          ['rpmlint'],
+        \ 'solidity':      ['solc'],
         \ 'sql':           ['sqlint'],
         \ 'stylus':        ['stylint'],
         \ 'tcl':           ['nagelfar'],
         \ 'tex':           ['lacheck', 'chktex'],
         \ 'texinfo':       ['makeinfo'],
         \ 'text':          [],
+        \ 'trig':          ['rapper'],
+        \ 'turtle':        ['rapper'],
         \ 'twig':          ['twiglint'],
-        \ 'typescript':    ['tsc'],
+        \ 'typescript':    [],
         \ 'vala':          ['valac'],
         \ 'verilog':       ['verilator'],
         \ 'vhdl':          ['ghdl'],
@@ -102,6 +106,7 @@ let s:_DEFAULT_CHECKERS = {
         \ 'xquery':        ['basex'],
         \ 'yacc':          ['bison'],
         \ 'yaml':          ['jsyaml'],
+        \ 'yang':          ['pyang'],
         \ 'z80':           ['z80syntaxchecker'],
         \ 'zpt':           ['zptlint'],
         \ 'zsh':           ['zsh'],
@@ -334,7 +339,10 @@ endfunction " }}}2
 
 " Check for obsolete variable g:syntastic_<filetype>_checker
 function! g:SyntasticRegistry._checkDeprecation(filetype) abort " {{{2
-    if exists('g:syntastic_' . a:filetype . '_checker') && !exists('g:syntastic_' . a:filetype . '_checkers')
+    if exists('g:syntastic_' . a:filetype . '_checker') &&
+        \ !exists('g:syntastic_' . a:filetype . '_checkers') &&
+        \ type(g:syntastic_{a:filetype}_checker) == type('')
+
         let g:syntastic_{a:filetype}_checkers = [g:syntastic_{a:filetype}_checker]
         call syntastic#log#oneTimeWarn('variable g:syntastic_' . a:filetype . '_checker is deprecated')
     endif
