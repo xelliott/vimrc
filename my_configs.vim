@@ -6,7 +6,7 @@ set number
 
 set background=dark
 set t_Co=16
-colorscheme solarized
+colorscheme base16-eighties
 
 set ts=3 sw=3 et
 let g:indent_guides_start_level=2
