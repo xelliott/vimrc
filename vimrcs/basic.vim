@@ -130,6 +130,9 @@ set foldcolumn=1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Default new fortran file to free format
+let fortran_free_source=1
+
 " Enable syntax highlighting
 syntax enable 
 
