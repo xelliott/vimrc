@@ -5,8 +5,9 @@ set relativenumber
 set number
 
 set background=dark
-set t_Co=16
-colorscheme base16-eighties
+let g:gruvbox_bold=0
+" let g:gruvbox_termcolors=256
+colorscheme gruvbox
 
 set ts=4 sw=4 et
 let g:indent_guides_start_level=2

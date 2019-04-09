@@ -141,10 +141,10 @@ if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
-try
-    colorscheme colorized
-catch
-endtry
+" try
+"     colorscheme colorized
+" catch
+" endtry
 
 set background=dark
 
